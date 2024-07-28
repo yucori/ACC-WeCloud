@@ -57,4 +57,11 @@ public class Wish extends BaseTimeEntity {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void addCurrentAmount(Long amount) {
+        if (this.currentAmount == null) {
+            this.currentAmount = 0L;  // 현재 금액이 null일 경우 초기화
+        }
+        this.currentAmount += amount;
+    }
 }
