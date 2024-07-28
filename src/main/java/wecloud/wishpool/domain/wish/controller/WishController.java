@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import wecloud.wishpool.domain.funding.service.FundingService;
+import wecloud.wishpool.domain.user.dto.request.UserDoFundingResponseDto;
 import wecloud.wishpool.domain.wish.dto.request.WishSaveRequestDto;
 import wecloud.wishpool.domain.wish.dto.request.WishUpdateRequestDto;
 import wecloud.wishpool.domain.wish.dto.response.WishGetOneResponseDto;
@@ -13,12 +15,15 @@ import wecloud.wishpool.domain.wish.entity.Wish;
 import wecloud.wishpool.domain.wish.service.WishService;
 import wecloud.wishpool.global.response.ApiResponse;
 
+import java.util.List;
+
 @Tag(name = "Wish API", description = "소원 피드 API")
 @RestController
 @RequestMapping("/wishes")
 @RequiredArgsConstructor
 public class WishController {
     private final WishService wishService;
+    private final FundingService fundingService;
     @PostMapping
     @Operation(summary = "소원 피드 생성", description = "소원 피드를 생성합니다.")
     public ApiResponse<Long> createWish(@RequestParam Long userId, @RequestBody WishSaveRequestDto requestDto) {
@@ -46,6 +51,10 @@ public class WishController {
         return ApiResponse.responseSuccess("소원 피드 삭제 완료");
     }
 
-
+    @GetMapping("/{wishId}/sponsor")
+    @Operation(summary = "펀딩한 유저 조회", description = "펀딩한 유저를 조회합니다.")
+    public ApiResponse<List<UserDoFundingResponseDto>> getUserFundingList(@PathVariable Long wishId) {
+        return ApiResponse.responseSuccess(fundingService.getUserFundingList(wishId),"펀딩한 유저 조회 완료");
+    }
 
 }
