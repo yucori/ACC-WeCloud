@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import wecloud.wishpool.domain.reviewComment.entity.ReviewComment;
 import wecloud.wishpool.domain.wish.entity.Wish;
+import wecloud.wishpool.global.auditing.BaseTimeEntity;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Review extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
     private Long id;
