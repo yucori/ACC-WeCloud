@@ -20,7 +20,7 @@ public class WishService {
 
     @Transactional
     public Long createWish(Long userId, WishSaveRequestDto requestDto) {
-        User findUser = userService.findById(userId);
+        User findUser = userService.findByUserId(userId);
         return wishRepository.save(toEntity(findUser,requestDto)).getId();
     }
 
@@ -35,7 +35,7 @@ public class WishService {
                 .build();
     }
 
-    public WishGetOneResponseDto findById(Long wishId) {
+    public WishGetOneResponseDto findWish(Long wishId) {
         Wish wish = findByWishId(wishId);
         WishGetOneResponseDto responseDto = WishGetOneResponseDto.builder()
                 .title(wish.getTitle())
@@ -63,7 +63,7 @@ public class WishService {
         return responseDto;
     }
 
-    private Wish findByWishId(Long wishId) {
+    public Wish findByWishId(Long wishId) {
         return wishRepository.findByIdAndIsDeletedFalse(wishId).orElseThrow(() -> new IllegalArgumentException("해당 소원이 없습니다."));
     }
 
