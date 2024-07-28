@@ -24,6 +24,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, StatusEnum.OK, data, message);
     }
 
+    public static <T> ApiResponse<T> response201Success(T data, String message) {
+        return new ApiResponse<>(true, StatusEnum.CREATED, data, message);
+    }
+
     @Builder
     private ApiResponse(boolean isSuccess, StatusEnum status, T data, String message) {
         this.isSuccess = isSuccess;
