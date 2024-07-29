@@ -44,6 +44,8 @@ public class WishService {
                 .deadline(wish.getDeadline())
                 .targetAmount(wish.getTargetAmount())
                 .currentAmount(wish.getCurrentAmount())
+                .isCompleted(wish.isCompleted())
+                .isEnded(wish.isEnded())
                 .build();
         return responseDto;
     }
@@ -64,12 +66,30 @@ public class WishService {
     }
 
     public Wish findByWishId(Long wishId) {
-        return wishRepository.findByIdAndIsDeletedFalse(wishId).orElseThrow(() -> new IllegalArgumentException("해당 소원이 없습니다."));
+        Wish wish = wishRepository.findByIdAndIsDeletedFalse(wishId).orElseThrow(() -> new IllegalArgumentException("해당 소원이 없습니다."));
+        if (wish.isCompleted()) {
+            throw new IllegalArgumentException("펀딩이 완료된 소원입니다.");
+        } else if (wish.isEnded()) {
+            throw new IllegalArgumentException("마감된 소원입니다.");
+        }
+        return wish;
     }
 
     @Transactional
     public void deleteWish(Long wishId) {
         Wish wish = findByWishId(wishId);
         wish.delete();
+    }
+
+    @Transactional
+    public void closeWish(Long wishId) {
+        Wish wish = findByWishId(wishId);
+        wish.updateEnd();
+    }
+
+    @Transactional
+    public void completeWish(Long wishId) {
+        Wish wish = findByWishId(wishId);
+        wish.updateCompleted();
     }
 }
