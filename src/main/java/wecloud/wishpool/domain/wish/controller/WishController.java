@@ -6,15 +6,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import wecloud.wishpool.domain.funding.service.FundingService;
+import wecloud.wishpool.domain.user.dto.request.UserDoFundingResponseDto;
 import wecloud.wishpool.domain.wish.dto.request.WishSaveRequestDto;
 import wecloud.wishpool.domain.wish.dto.request.WishUpdateRequestDto;
 import wecloud.wishpool.domain.wish.dto.response.WishGetOneResponseDto;
-import wecloud.wishpool.domain.wish.entity.Wish;
 import wecloud.wishpool.domain.wish.service.WishService;
 import wecloud.wishpool.global.aws.service.S3Service;
 import wecloud.wishpool.global.response.ApiResponse;
 
 import java.io.IOException;
+
+import java.util.List;
+
 
 @Tag(name = "Wish API", description = "소원 피드 API")
 @RestController
@@ -22,7 +26,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class WishController {
     private final WishService wishService;
+
     private final S3Service s3Service;
+
+    private final FundingService fundingService;
+  
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "소원 피드 생성", description = "소원 피드를 생성합니다.")
     public ApiResponse<Long> createWish(@RequestParam Long userId,
@@ -47,7 +55,7 @@ public class WishController {
     @GetMapping("/{wishId}")
     @Operation(summary = "소원 피드 조회", description = "소원 피드를 조회합니다.")
     public ApiResponse<WishGetOneResponseDto> getWish(@PathVariable Long wishId) {
-        WishGetOneResponseDto wishDto = wishService.findById(wishId);
+        WishGetOneResponseDto wishDto = wishService.findWish(wishId);
         return ApiResponse.responseSuccess(wishDto, "소원 피드 조회 완료");
     }
 
@@ -65,6 +73,23 @@ public class WishController {
         return ApiResponse.responseSuccess("소원 피드 삭제 완료");
     }
 
+    @GetMapping("/{wishId}/sponsor")
+    @Operation(summary = "펀딩한 유저 조회", description = "펀딩한 유저를 조회합니다.")
+    public ApiResponse<List<UserDoFundingResponseDto>> getUserFundingList(@PathVariable Long wishId) {
+        return ApiResponse.responseSuccess(fundingService.getUserFundingList(wishId),"펀딩한 유저 조회 완료");
+    }
 
+    @PostMapping("/{wishId}/close")
+    @Operation(summary = "(알림용🔔/상태변경) 소원 피드 종료", description = "소원 피드를 종료합니다.")
+    public ApiResponse<?> closeWish(@PathVariable Long wishId) {
+        wishService.closeWish(wishId);
+        return ApiResponse.responseSuccess("소원 피드 종료");
+    }
 
+    @PostMapping("/{wishId}/complete")
+    @Operation(summary = "(알림용🔔/상태변경) 소원 펀딩 달성 완료", description = "소원 펀딩을 완료합니다.")
+    public ApiResponse<?> completeWish(@PathVariable Long wishId) {
+        wishService.completeWish(wishId);
+        return ApiResponse.responseSuccess("소원 펀딩 달성 완료");
+    }
 }
