@@ -51,7 +51,7 @@ public class ReviewCommentService {
                         .userId(reviewComment.getUser().getId())
                         .userName(reviewComment.getUser().getName())
                         .content(reviewComment.getContent())
-                        .createdAt(reviewComment.getCreatedAt())
+                        .createdAt(reviewComment.getCreatedDate())
                         .build())
                 .toList();
 
