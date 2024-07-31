@@ -57,4 +57,8 @@ public class Wish extends BaseTimeEntity {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
 }
