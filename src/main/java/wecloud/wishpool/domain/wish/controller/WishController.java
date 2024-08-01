@@ -31,7 +31,7 @@ public class WishController {
     private final S3Service s3Service;
 
     private final FundingService fundingService;
-  
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "소원 피드 생성", description = "소원 피드를 생성합니다.")
     public ApiResponse<Long> createWish(@RequestParam Long userId,
@@ -40,16 +40,15 @@ public class WishController {
         Wish wish = wishService.createWish(userId, requestDto);
         String fileName = "";
 
-        if(multipartFile != null){ // 파일 업로드한 경우에만
-
-            try{// 파일 업로드
+        if (multipartFile != null) { // 파일 업로드한 경우에만
+            try {// 파일 업로드
                 fileName = s3Service.upload(multipartFile, "wish"); // S3 버킷의 images 디렉토리 안에 저장됨
                 System.out.println("fileName = " + fileName);
-            }catch (IOException e){
+            } catch (IOException e) {
                 return (ApiResponse<Long>) ApiResponse.response400Error("파일 업로드 실패");
             }
         }
-        wish.updateImage(fileName);
+        wishService.updateImage(wish.getId(), fileName);
         return ApiResponse.response201Success(wish.getId(), "소원 피드 생성 완료");
     }
 
