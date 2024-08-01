@@ -31,4 +31,11 @@ public class ReviewCommentController {
         return ApiResponse.responseSuccess(reviewCommentDto, "리뷰 댓글 조회 완료");
     }
 
+    @PostMapping("/{commentId}")
+    @Operation(summary = "리뷰 댓글 삭제", description = "리뷰 댓글을 삭제합니다.")
+    public ApiResponse<?> deleteReviewComment(@PathVariable Long wishId, @PathVariable Long reviewId, @PathVariable Long commentId) {
+        reviewCommentService.deleteComment(wishId, reviewId, commentId);
+        return ApiResponse.responseSuccess("리뷰 댓글 삭제 완료");
+    }
+
 }

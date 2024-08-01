@@ -18,15 +18,15 @@ public class ReviewService {
     private final WishService wishService;
 
     @Transactional
-    public Long createReview(Long wishId, ReviewCreateRequestDto requestDto) {
+    public Long createReview(Long wishId, String reviewImg, ReviewCreateRequestDto requestDto) {
         Wish wish = wishService.findByWishId(wishId);
-        return reviewRepository.save(toEntity(wish, requestDto)).getId();
+        return reviewRepository.save(toEntity(wish, reviewImg, requestDto)).getId();
     }
 
-    private Review toEntity(Wish wish, ReviewCreateRequestDto requestDto) {
+    private Review toEntity(Wish wish, String reviewImg, ReviewCreateRequestDto requestDto) {
         return Review.builder()
                 .content(requestDto.getContent())
-                .image(requestDto.getImage())
+                .image(reviewImg)
                 .wish(wish)
                 .build();
     }
