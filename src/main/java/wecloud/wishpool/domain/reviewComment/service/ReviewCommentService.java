@@ -46,7 +46,7 @@ public class ReviewCommentService {
         if (review.getWish().getId() != wishId) {
             throw new IllegalArgumentException("해당 리뷰를 조회할 수 없습니다.");
         }
-        return reviewCommentRepository.findByReviewId(reviewId).stream()
+        return reviewCommentRepository.findByIdAndIsDeletedFalse(reviewId).stream()
                 .map(reviewComment -> ReviewCommentGetResponseDto.builder()
                         .userId(reviewComment.getUser().getId())
                         .userName(reviewComment.getUser().getName())
@@ -57,4 +57,18 @@ public class ReviewCommentService {
 
     }
 
+    @Transactional
+    public void deleteComment(Long wishId, Long reviewId, Long reviewCommentId) {
+        Review review = reviewService.findByReviewId(reviewId);
+        if (review.getWish().getId() != wishId) {
+            throw new IllegalArgumentException("해당 리뷰를 조회할 수 없습니다.");
+        }
+        ReviewComment reviewComment = findByReviewCommentId(reviewCommentId);
+        reviewComment.deleteComment();
+    }
+
+    public ReviewComment findByReviewCommentId(Long reviewCommentId) {
+        return reviewCommentRepository.findByIdAndIsDeletedFalse(reviewCommentId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰 댓글을 찾을 수 없습니다."));
+    }
 }
