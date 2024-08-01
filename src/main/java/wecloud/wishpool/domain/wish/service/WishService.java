@@ -68,6 +68,11 @@ public class WishService {
 
     public Wish findByWishId(Long wishId) {
         Wish wish = wishRepository.findByIdAndIsDeletedFalse(wishId).orElseThrow(() -> new IllegalArgumentException("해당 소원이 없습니다."));
+        return wish;
+    }
+
+    public Wish findByWishIdFunding(Long wishId) {
+        Wish wish = wishRepository.findById(wishId).orElseThrow(() -> new IllegalArgumentException("해당 소원이 없습니다."));
         if (wish.isCompleted()) {
             throw new IllegalArgumentException("펀딩이 완료된 소원입니다.");
         } else if (wish.isEnded()) {
