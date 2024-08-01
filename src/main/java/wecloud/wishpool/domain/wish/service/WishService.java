@@ -29,7 +29,6 @@ public class WishService {
         return Wish.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .image(requestDto.getImage())
                 .deadline(requestDto.getDeadline())
                 .targetAmount(requestDto.getTargetAmount())
                 .user(user)
@@ -97,5 +96,11 @@ public class WishService {
     public void completeWish(Long wishId) {
         Wish wish = findByWishId(wishId);
         wish.updateCompleted();
+    }
+
+    @Transactional
+    public void updateImage(Long id, String fileName) {
+        Wish wish = findByWishId(id);
+        wish.updateImage(fileName);
     }
 }
